@@ -2,6 +2,42 @@
 
 {% block content %}
 
-<h1>Login Page!</h1>
+<div class="fullscreen-centre">
+    <div class="card-sm">
+        <h2 class="card-title">Hospital Dashboard</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, msg in messages %}
+        <div class="flash 
+            {% if category == 'error' %}flash-error
+            {% elif category == 'success' %}flash-success{% endif %}">
+            {{ msg }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form action="/login" method="POST" class="form-stack">
+
+            <div>
+                <label class="input-label">Email</label>
+                <input type="text" name="email" required class="input-field">
+            </div>
+
+            <div>
+                <label class="input-label">Password</label>
+                <input type="password" name="password" required class="input-field">
+            </div>
+
+            <button type="submit" class="botting">Login</button>
+
+            <p class="small-centre">
+                No account?
+                <a href="/register" class="link-green">Register</a>
+            </p>
+        </form>
+    </div>
+</div>
 
 {% endblock %}

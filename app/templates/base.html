@@ -6,10 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="" />
     <meta name="keywords" content="health app" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Health app</title>
 </head>
 
-<body>
+<body class="app-body">
     {% block content %}{% endblock %}
 </body>
 
