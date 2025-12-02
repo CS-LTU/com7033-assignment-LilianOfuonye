@@ -4,19 +4,17 @@
     margin: 0;
 }
 
-
 body,
 html {
     font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
         "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-/* Body styling for this layout */
+/* Body styling */
 .app-body {
     background: #f3f4f6;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+
 }
 
 /* Layout */
@@ -27,23 +25,31 @@ html {
     height: 100vh;
 }
 
-/* Card container */
-.card {
+/* Card containers */
+.card,
+.card-sm {
     background: #ffffff;
     padding: 2rem;
     border-radius: 1rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
+}
+
+.card {
     max-width: 28rem;
+}
+
+.card-sm {
+    max-width: 24rem;
 }
 
 /* Headings */
 .card-title {
     font-size: 1.5rem;
     font-weight: 700;
-    text-align: center;
+    text-align: centre;
     margin-bottom: 1.5rem;
-    color: #4a5568;
+    colour: #4a5568;
 }
 
 /* Flash messages */
@@ -56,12 +62,12 @@ html {
 
 .flash-error {
     background: #fee2e2;
-    color: #b91c1c;
+    colour: #b91c1c;
 }
 
 .flash-success {
     background: #d1fae5;
-    color: #047857;
+    colour: #047857;
 }
 
 /* Form stack */
@@ -88,29 +94,34 @@ html {
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
-/* Button */
-.botting {
+/* Buttons */
+.auth-button {
     width: 100%;
     background: #16a34a;
     color: #ffffff;
-    padding: 0.5rem 0;
+    padding: 0.7rem 0;
     border-radius: 0.375rem;
     transition: background 0.15s;
+    font-weight: 600;
+    transition: 0.3s;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
 }
 
-.botting:hover {
+.auth-button:hover {
     background: #15803d;
 }
 
-/* Text + links */
+/* Links */
 .small-centre {
-    text-align: center;
+    text-align: centre;
     font-size: 0.875rem;
     margin-top: 0.75rem;
 }
 
 .link-green {
-    color: #16a34a;
+    colour: #16a34a;
     text-decoration: none;
 }
 
@@ -125,14 +136,140 @@ html {
     gap: 1.25rem;
 }
 
-/* LOGIN PAGE STYLES */
-
-/* Smaller card container for login page */
-.card-sm {
+/* FORGOT PASSWORD PAGE STYLES */
+.forgot-wrapper {
+    max-width: 400px;
+    margin: 80px auto;
+    padding: 20px;
     background: #ffffff;
-    padding: 2rem;
     border-radius: 1rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.forgot-title {
+    text-align: centre;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+    colour: #4a5568;
+}
+
+.forgot-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.forgot-input {
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+}
+
+.forgot-btn {
+    padding: 10px;
+    border: none;
+    background: #16a34a;
+    colour: #fff;
+    border-radius: 0.375rem;
+    cursor: pointer;
+}
+
+.forgot-btn:hover {
+    background: #15803d;
+}
+
+.forgot-links {
+    margin-top: 15px;
+    text-align: centre;
+}
+
+.hero {
+    background: url('{{ url_for("static", filename="images/background.avif") }}')no-repeat center center/cover;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.55);
+    /* Dark overlay for readability */
+}
+
+.hero-content {
+    position: relative;
+    color: white;
+    z-index: 2;
+    max-width: 700px;
+    padding: 20px;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+.btn-group {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.hero-btn {
+    padding: 14px 24px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-primary {
+    background: #28a745;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #218838;
+    transform: translateY(-3px);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid #28a745;
+    color: #28a745;
+}
+
+.btn-outline:hover {
+    background: #28a745;
+    color: white;
+    transform: translateY(-3px);
+}
+
+.dashboard-preview {
+    margin-top: 40px;
     width: 100%;
-    max-width: 24rem;
+    border-radius: 12px;
+    box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+a {
+    text-decoration: none;
 }

@@ -2,7 +2,7 @@ from app import create_app
 
 
 
-# creating this as an entry point used to start the flask app.
+# App entry point with app initialization
 app = create_app()
 
 

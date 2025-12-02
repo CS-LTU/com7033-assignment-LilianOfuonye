@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    /* HERO SECTION WITH AVIF BACKGROUND */
+    .hero {
+        background: url('{{ url_for("static", filename="images/background.avif") }}') no-repeat center center/cover;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        position: relative;
+        padding: 20px;
+    }
+
+    /* DARK OVERLAY FOR TEXT READABILITY */
+    .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    /* TEXT CONTENT */
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        color: #ffffff;
+        max-width: 750px;
+    }
+
+    .hero-content h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    .hero-content p {
+        font-size: 1.25rem;
+        line-height: 1.7;
+        margin-bottom: 25px;
+    }
+
+    /* BUTTONS */
+    .btn-group {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .hero-btn {
+        padding: 14px 26px;
+        font-size: 1rem;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.25s ease;
+        border: none;
+    }
+
+    .btn-primary {
+        background: #2a9d8f;
+        color: #fff;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+    }
+
+    .btn-outline {
+        background: transparent;
+        border: 2px solid #2a9d8f;
+        color: #2a9d8f;
+    }
+
+    .btn-outline:hover {
+        background: #2a9d8f;
+        color: white;
+        transform: translateY(-3px);
+    }
+
+    /* LOGIN SECTION */
+    #login-section {
+        background: transparent;
+    }
+
+    /* Flash messages styling remains intact */
+    .flash-error {
+        background: #e63946;
+    }
+
+    .flash-success {
+        background: #2a9d8f;
+    }
+</style>
+
+<section class="hero">
+    <div class="hero-content">
+        <h1>London Hospital Data Portal</h1>
+        <p>
+            A secure analytics and data visualization environment supporting evidence-based healthcare research,
+            clinical planning, and operational decision-making across London’s medical network.
+        </p>
+
+        <div class="btn-group">
+            <a class="hero-btn btn-primary" href="{{url_for('auth.register')}}">
+                Get Started
+            </a>
+            <a class="hero-btn btn-outline" href="{{url_for('auth.login')}}">
+                Sign In
+            </a>
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}
