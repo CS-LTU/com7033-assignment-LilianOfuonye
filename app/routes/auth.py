@@ -29,8 +29,6 @@ def login():
             user = get_user_by_email(email)
             if not user :
                 raise ValueError('user doesnt exist')
-            print(user)
-            print(user[4])
             password_hash = user[4]
     
             if not user or not check_password_hash(password_hash, password):
@@ -56,6 +54,7 @@ def register():
             first_name = request.form.get('first_name')
             last_name = request.form.get('last_name')
             email = request.form.get('email')
+            role = request.form.get('role')
             password = request.form.get('password')
             confirm_password = request.form.get('confirm_password')
 
@@ -83,9 +82,9 @@ def register():
             hashed_password = generate_password_hash(password)
 
             # Save to SQLite
-            with sqlite3.connect("users.db") as conn:
+            with sqlite3.connect("london_health.db") as conn:
                 cursor = conn.cursor()
-                cursor.execute("INSERT INTO users (first_name, last_name, email, password_hash) VALUES (?, ?, ?, ?)", (first_name, last_name, email, hashed_password))
+                cursor.execute("INSERT INTO users (first_name, last_name, email, role, password_hash) VALUES (?, ?, ?, ?, ?)", (first_name, last_name, email, role, hashed_password))
                 conn.commit()
 
             flash("Registration successful! Please log in.", "success")
@@ -164,3 +163,11 @@ def reset_password():
 
     return render_template('reset_password.html')
 
+
+
+@auth_blueprint.route('/logout')
+def logout():
+    session.pop("email", None)
+    session.clear()
+    flash("You have been logged out.", "success")
+    return redirect(url_for("auth.login"))

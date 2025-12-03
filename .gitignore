@@ -10,3 +10,7 @@ venv/
 ENV/
 
 *db
+
+
+.vscode/
+.idea/
