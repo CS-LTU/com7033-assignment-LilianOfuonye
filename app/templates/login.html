@@ -4,20 +4,9 @@
 
 <div class="fullscreen-centre">
     <div id="login-section" class="fullscreen-centre">
-        <div class="card-sm">
-            <h2 class="card-title">Hospital Dashboard Login</h2>
+        <div class="card-lg ">
+            <h2 class="card-title text-center">Login</h2>
 
-            {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            {% for category, msg in messages %}
-            <div class="flash 
-                {% if category == 'error' %}flash-error
-                {% elif category == 'success' %}flash-success{% endif %}">
-                {{ msg }}
-            </div>
-            {% endfor %}
-            {% endif %}
-            {% endwith %}
 
             <form method="POST" class="form-stack">
 

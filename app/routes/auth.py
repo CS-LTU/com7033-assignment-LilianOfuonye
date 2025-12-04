@@ -26,12 +26,12 @@ def login():
             user = get_user_by_email(email)
             if not user :
                 raise ValueError('user doesnt exist')
-            password_hash = user[4]
     
-            if not user or not check_password_hash(password_hash, password):
+            if not check_password_hash(user.password_hash, password):
                 raise ValueError("Invalid email or password.")
             
-            session['user'] = email
+            session['user_id'] = user.id
+            session['role'] = user.role
             session.permanent = True
             flash("Login successful!", "success")
             return redirect(url_for('dashboard.dashboard'))

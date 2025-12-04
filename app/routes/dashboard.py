@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash, current_app, session, redirect, url_for
-from utils.decorators import auth_required
+from utils.decorators import auth_required, admin_or_doctor_required, admin_required, doctor_required
 from app.models.patient import Patient
 import re  
 from datetime import datetime
@@ -9,12 +9,14 @@ dashboard_blueprint = Blueprint('dashboard', __name__)
 
 @dashboard_blueprint.route('/dashboard')
 @auth_required
+@admin_or_doctor_required
 def dashboard():
     patients = Patient.get_all_patients()  
     return render_template('dashboard.html', patients=patients)
 
 @dashboard_blueprint.route('/register_patient', methods=['GET', 'POST'])
 @auth_required
+@admin_required
 def register_patient():
     if request.method == 'POST':
         try:
@@ -55,6 +57,7 @@ def register_patient():
             
 @dashboard_blueprint.route('/dashboard/patients/<int:patient_id>')
 @auth_required
+@doctor_required
 def view_patient(patient_id):
     patient = Patient.get_by_id(patient_id)
     if not patient:
@@ -65,6 +68,7 @@ def view_patient(patient_id):
 
 @dashboard_blueprint.route('/dashboard/patients/<int:patient_id>/update', methods=['GET', 'POST'])
 @auth_required
+@doctor_required
 def update_patient(patient_id):
     if request.method == 'POST':
         try:
@@ -96,4 +100,3 @@ def update_patient(patient_id):
         except ValueError as e:
             flash(f"{e}", 'error')
             return redirect(url_for('dashboard.view_patient', patient_id=patient_id))
-

@@ -1,4 +1,5 @@
 import sqlite3
+from app.models.user import User
 
 """Database initialisation to store user authentication details"""
 
@@ -51,4 +52,7 @@ def get_user_by_email(email):
     with sqlite3.connect("london_health.db") as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
-        return cursor.fetchone()
+        value = cursor.fetchone()
+        if value:
+            return User(*value)
+        return None

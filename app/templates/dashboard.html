@@ -1,6 +1,6 @@
 {% extends "private_layout.html" %} {% block page_content %}
 <div class="mb-8">
-  <h1 class="text-3xl font-bold text-slate-900 mb-1">Welcome back!</h1>
+  <h1 class="text-3xl font-bold text-slate-900 mb-1">Welcome!</h1>
 </div>
 <div
   class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden"
@@ -11,7 +11,7 @@
     <div>
       <h2 class="text-lg font-semibold text-slate-900">Patients</h2>
     </div>
-
+    {% if session.role == 'admin' %}
     <a
       id="openModalBtn"
       class="inline-flex cursor-pointer items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-emerald-600 text-white hover:bg-emerald-500 transition"
@@ -19,6 +19,7 @@
       <span class="text-base leading-none">+</span>
       <span>Add New Patient</span>
     </a>
+    {% endif %}
   </div>
 
   <div class="overflow-x-auto">
@@ -73,6 +74,7 @@
           <td class="px-6 py-3 text-sm text-slate-700">{{ patient.gender }}</td>
           <td class="px-6 py-3 text-sm text-right">
             <div class="inline-flex items-center gap-2">
+              {% if session.role == 'doctor' %}
               <form
                 action="{{ url_for('dashboard.view_patient', patient_id=patient.patient_id) }}"
                 class="inline"
@@ -84,15 +86,15 @@
                   View
                 </button>
               </form>
-
-              <form method="post" class="inline">
-                <button
-                  type="submit"
-                  class="px-2 py-1 text-xs rounded-md border border-red-200 text-red-700 hover:bg-red-50"
-                >
-                  Delete
-                </button>
-              </form>
+              {% endif %} {% if session.role == 'admin' %}
+              <button
+                type="button"
+                onclick="openDeleteModal('{{ patient.patient_id }}', '{{ patient.first_name }} {{ patient.last_name }}')"
+                class="px-2 py-1 text-xs rounded-md border border-red-200 text-red-700 hover:bg-red-50"
+              >
+                Delete
+              </button>
+              {% else %} {% endif %}
             </div>
           </td>
         </tr>

@@ -7,9 +7,64 @@ def auth_required(f):
     
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if 'user' not in session:
+        if 'user_id' not in session:
             flash("You need to be logged in to access this page.", "error")
             return redirect(url_for('auth.login'))
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
+def admin_required(f):
+    '''To ensure that the logged-in user has admin privileges.'''
+    
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash("You need to be logged in to access this page.", "error")
+            return redirect(url_for('auth.login'))
+        
+        if session.get('role') != 'admin':
+            session.clear()
+            flash("You do not have permission to access this page.", "error")
+            return redirect(url_for('auth.login'))
+        
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+def doctor_required(f):
+    ''' Ensures that the logged-in user has doctor privileges.'''
+    
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash("You need to be logged in to access this page.", "error")
+            return redirect(url_for('auth.login'))
+        
+        if session.get('role') != 'doctor':
+            session.clear()
+            flash("You do not have permission to access this page.", "error")
+            return redirect(url_for('auth.login'))
+        
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+def admin_or_doctor_required(f):
+    '''Ensures that the logged-in user has either admin or doctor privileges.'''
+    
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash("You need to be logged in to access this page.", "error")
+            return redirect(url_for('auth.login'))
+        
+        if session.get('role') not in ['admin', 'doctor']:
+            session.clear()
+            flash("You do not have permission to access this page.", "error")
+            return redirect(url_for('auth.login'))
+        
         return f(*args, **kwargs)
 
     return decorated_function

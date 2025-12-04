@@ -26,7 +26,8 @@ html {
 
 /* Card containers */
 .card,
-.card-sm {
+.card-sm,
+.card-lg {
   background: #ffffff;
   padding: 2rem;
   border-radius: 1rem;
@@ -40,6 +41,12 @@ html {
 
 .card-sm {
   max-width: 24rem;
+}
+
+.card-lg {
+  min-width: 22rem;
+  max-width: 24px;
+  width: 22rem;
 }
 
 /* Headings */

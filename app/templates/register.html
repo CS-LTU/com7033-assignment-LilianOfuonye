@@ -1,16 +1,7 @@
 {% extends "base.html" %} {% block content %}
 <div class="fullscreen-centre">
   <div class="card">
-    <h2 class="card-title">Create Account</h2>
-
-    {% with messages = get_flashed_messages(with_categories=true) %} {% if
-    messages %} {% for category, msg in messages %}
-    <div
-      class="flash {% if category == 'error' %}flash-error {% elif category == 'success' %}flash-success{% endif %}"
-    >
-      {{ msg }}
-    </div>
-    {% endfor %} {% endif %} {% endwith %}
+    <h2 class="card-title text-center">Create Account</h2>
 
     <form action="/register" method="POST" class="form-stack">
       <div class="row-gap">
