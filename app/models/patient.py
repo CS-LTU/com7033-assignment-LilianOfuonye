@@ -82,7 +82,7 @@ class Patient:
         # Connect to database and find patient by ID
         with sqlite3.connect(DB_NAME) as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM patients WHERE patient_id = ?", (patient_id,))
+            cursor.execute("SELECT * FROM patients WHERE id = ?", (patient_id,))
             row = cursor.fetchone()
 
         # Convert to dictionary if found
@@ -128,7 +128,7 @@ class Patient:
 
 
     @staticmethod
-    def update(patient_id, first_name, last_name, date_of_birth, gender, email):
+    def update(patient_id, first_name, last_name, date_of_birth, gender):
         """
         Update a patient's information
         Returns True if successful, False if patient not found
@@ -138,8 +138,8 @@ class Patient:
             with sqlite3.connect(DB_NAME) as conn:
                 cursor = conn.cursor()
                 cursor.execute(
-                    "UPDATE patients SET first_name = ?, last_name = ?, date_of_birth = ?, gender = ?, email = ? WHERE patient_id = ?",
-                    (first_name, last_name, date_of_birth, gender, email, patient_id)
+                    "UPDATE patients SET first_name = ?, last_name = ?, date_of_birth = ?, gender = ? WHERE id = ?",
+                    (first_name, last_name, date_of_birth, gender, patient_id)
                 )
                 conn.commit()
                 return True
@@ -155,6 +155,6 @@ class Patient:
         # Connect to database and delete patient
         with sqlite3.connect(DB_NAME) as conn:
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM patients WHERE patient_id = ?", (patient_id,))
+            cursor.execute("DELETE FROM patients WHERE id = ?", (patient_id,))
             conn.commit()
             return True

@@ -61,6 +61,7 @@ html {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  pointer-events: none;
 }
 
 .flash {
@@ -69,6 +70,7 @@ html {
   border-radius: 0.5rem;
   margin-bottom: 0.75rem;
   animation: slideIn 0.4s ease-out forwards, fadeOut 0.3s ease-in 4.7s forwards;
+  pointer-events: auto;
 }
 
 .error {

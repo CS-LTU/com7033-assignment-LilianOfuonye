@@ -52,3 +52,48 @@ def register_patient():
             flash(f"{e}", 'error')
             return redirect(url_for("dashboard.dashboard"))
             
+            
+@dashboard_blueprint.route('/dashboard/patients/<int:patient_id>')
+@auth_required
+def view_patient(patient_id):
+    patient = Patient.get_by_id(patient_id)
+    if not patient:
+        flash("Patient not found.", "error")
+        return redirect(url_for('dashboard.dashboard'))
+    return render_template('view_patient.html', patient=patient)
+
+
+@dashboard_blueprint.route('/dashboard/patients/<int:patient_id>/update', methods=['GET', 'POST'])
+@auth_required
+def update_patient(patient_id):
+    if request.method == 'POST':
+        try:
+            first_name = request.form.get('first_name', '').strip()
+            last_name = request.form.get('last_name', '').strip()
+            date_of_birth = request.form.get('date_of_birth', '').strip()
+            gender = request.form.get('gender', '').strip()
+            
+            # Basic validation
+            if not all([first_name, last_name, date_of_birth, gender]):
+                raise ValueError("All fields are required.")
+            
+            # Validate date of birth
+            dob = datetime.strptime(date_of_birth, '%Y-%m-%d')
+            today = datetime.today()
+            age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+            if age < 0 or age > 120:
+                raise ValueError("Invalid date of birth.")
+            
+            # gender validation
+            gender_options = ['Male', 'Female', 'Other']
+            if gender not in gender_options:
+                raise ValueError("Invalid gender selection.") 
+            
+            Patient.update(patient_id, first_name, last_name, date_of_birth, gender)
+            flash("Patient information updated successfully!", "success")
+            return redirect(url_for('dashboard.view_patient', patient_id=patient_id))
+        
+        except ValueError as e:
+            flash(f"{e}", 'error')
+            return redirect(url_for('dashboard.view_patient', patient_id=patient_id))
+
