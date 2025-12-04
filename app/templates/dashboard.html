@@ -60,7 +60,9 @@
       <tbody class="divide-y divide-slate-100">
         {% for patient in patients %}
         <tr class="hover:bg-slate-50/70">
-          <td class="px-6 py-3 text-sm text-slate-700">{{ patient.id }}</td>
+          <td class="px-6 py-3 text-sm text-slate-700">
+            {{ patient.patient_id }}
+          </td>
           <td class="px-6 py-3 text-sm text-slate-700">
             {{ patient.first_name }}
           </td>
@@ -72,12 +74,12 @@
           <td class="px-6 py-3 text-sm text-right">
             <div class="inline-flex items-center gap-2">
               <a
-                class="px-2 py-1 text-xs rounded-md border border-slate-200 text-slate-700 hover:bg-slate-100"
+                class="cursor-pointer px-2 py-1 text-xs rounded-md border border-slate-200 text-slate-700 hover:bg-slate-100"
               >
                 View
               </a>
               <a
-                class="px-2 py-1 text-xs rounded-md border border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                class="cursor-pointer px-2 py-1 text-xs rounded-md border border-emerald-200 text-emerald-700 hover:bg-emerald-50"
               >
                 Edit
               </a>
@@ -113,7 +115,11 @@
       <h3 class="text-lg font-semibold text-slate-900">Add New Patient</h3>
     </div>
 
-    <form method="POST" class="px-6 py-4">
+    <form
+      method="POST"
+      action="{{url_for('dashboard.register_patient')}}"
+      class="px-6 py-4"
+    >
       <div class="space-y-4">
         <div class="flex gap-3">
           <div class="flex-1">
@@ -144,7 +150,7 @@
         <div class="flex gap-3">
           <div class="flex-1">
             <label class="block text-sm font-medium text-slate-700 mb-1"
-              >Age</label
+              >Date of birth</label
             >
             <input
               type="date"

@@ -25,6 +25,18 @@ def init_db():
             )
         ''')
         
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS patients (
+                patient_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                first_name TEXT NOT NULL,
+                last_name TEXT NOT NULL,
+                date_of_birth DATE NOT NULL,
+                gender TEXT NOT NULL,
+                email TEXT UNIQUE NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
         default_roles = ['admin', 'doctor']
         for role in default_roles:
             cursor.execute('''

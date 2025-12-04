@@ -2,8 +2,6 @@ import sqlite3
 from flask import Blueprint, flash, request, redirect, render_template, session, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
-
-
 from app.config.sqlite import get_user_by_email
 
 # This is the authentication file that handles login, register,logout and home page redirect, with everything grouped within a blueprint.
@@ -12,7 +10,6 @@ auth_blueprint = Blueprint('auth', __name__)
 @auth_blueprint.route('/')
 def index():
     return render_template('landing_page.html')
-
 
 
 @auth_blueprint.route('/login', methods=['GET', 'POST'])

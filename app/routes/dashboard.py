@@ -1,6 +1,8 @@
-from flask import Blueprint, render_template, current_app, session, redirect, url_for
+from flask import Blueprint, render_template, request, flash, current_app, session, redirect, url_for
 from utils.decorators import auth_required
-
+from app.models.patient import Patient
+import re  
+from datetime import datetime
 
 
 dashboard_blueprint = Blueprint('dashboard', __name__)
@@ -8,6 +10,45 @@ dashboard_blueprint = Blueprint('dashboard', __name__)
 @dashboard_blueprint.route('/dashboard')
 @auth_required
 def dashboard():
-    
-   
-    return render_template('dashboard.html')
+    patients = Patient.get_all_patients()  
+    return render_template('dashboard.html', patients=patients)
+
+@dashboard_blueprint.route('/register_patient', methods=['GET', 'POST'])
+@auth_required
+def register_patient():
+    if request.method == 'POST':
+        try:
+            first_name = request.form.get('first_name', '').strip()
+            last_name = request.form.get('last_name', '').strip()
+            date_of_birth = request.form.get('date_of_birth', '').strip()
+            gender = request.form.get('gender', '').strip()
+            email = request.form.get('email', '').strip().lower()
+               
+            # Basic validation
+            if not all([first_name, last_name, date_of_birth, gender, email]):
+                raise ValueError ("All fields are required.")
+            
+            email_pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+            if not re.match(email_pattern, email):
+                raise ValueError("Invalid email format.")
+            
+            # Validate date of birth
+            dob = datetime.strptime(date_of_birth, '%Y-%m-%d')
+            today = datetime.today()
+            age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+            if age < 0 or age > 120:
+                raise ValueError("Invalid date of birth.")
+            
+            # gender validation
+            gender_options = ['Male', 'Female', 'Other']
+            if gender not in gender_options:
+                raise ValueError("Invalid gender selection.") 
+            
+            Patient.create_patient(first_name, last_name, date_of_birth, gender, email)
+            flash("Patient registered successfully!", "success")
+            return redirect(url_for('dashboard.dashboard'))
+        
+        except ValueError as e:
+            flash(f"{e}", 'error')
+            return redirect(url_for("dashboard.dashboard"))
+            
