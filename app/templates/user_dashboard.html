@@ -1,0 +1,471 @@
+{% extends "private_layout.html" %} {% block page_content %}
+<div class="mb-8">
+  <h1 class="text-3xl font-bold text-slate-900 mb-1">User Management</h1>
+</div>
+<div
+  class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden"
+>
+  <div
+    class="px-6 py-4 flex items-center justify-between border-b border-slate-100"
+  >
+    <div>
+      <h2 class="text-lg font-semibold text-slate-900">Users</h2>
+      <p class="text-sm text-slate-500 mt-1">
+        Showing {{ (page - 1) * per_page + 1 }} to {% if page * per_page < total_users %}{{ page * per_page }}{% else %}{{ total_users }}{% endif %} of {{ total_users }} users
+      </p>
+    </div>
+    <a
+      id="openModalBtn"
+      class="inline-flex cursor-pointer items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-emerald-600 text-white hover:bg-emerald-500 transition"
+    >
+      <span class="text-base leading-none">+</span>
+      <span>Add New User</span>
+    </a>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-left text-sm text-slate-700">
+      <thead class="bg-slate-50 border-b border-slate-100">
+        <tr>
+          <th
+            class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase"
+          >
+            Name
+          </th>
+          <th
+            class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase"
+          >
+            Email
+          </th>
+          <th
+            class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase"
+          >
+            Role
+          </th>
+          <th
+            class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase"
+          >
+            Created At
+          </th>
+          <th
+            class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase text-right"
+          >
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        {% for user in users %}
+        <tr class="hover:bg-slate-50/70">
+          <td class="px-6 py-3 text-sm text-slate-700">
+            {{ user.first_name }} {{ user.last_name }}
+          </td>
+          <td class="px-6 py-3 text-sm text-slate-700">{{ user.email }}</td>
+          <td class="px-6 py-3 text-sm text-slate-700">
+            <span class="px-2 py-1 text-xs rounded-full {% if user.role == 'admin' %}bg-purple-100 text-purple-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+              {{ user.role|capitalize }}
+            </span>
+          </td>
+          <td class="px-6 py-3 text-sm text-slate-700">
+            {% if user.created_at %}
+              {{ user.created_at.strftime('%Y-%m-%d %H:%M') if user.created_at is not string else user.created_at }}
+            {% else %}
+              N/A
+            {% endif %}
+          </td>
+          <td class="px-6 py-3 text-sm text-right">
+            <div class="inline-flex items-center gap-2">
+              <button
+                type="button"
+                onclick="openEditModal('{{ user.id }}', '{{ user.first_name }}', '{{ user.last_name }}', '{{ user.email }}', '{{ user.role }}')"
+                class="px-2 py-1 text-xs rounded-md border border-slate-200 text-slate-700 hover:bg-slate-100"
+              >
+                Edit
+              </button>
+              <button
+                type="button"
+                onclick="openDeleteModal('{{ user.id }}', '{{ user.first_name }} {{ user.last_name }}')"
+                class="px-2 py-1 text-xs rounded-md border border-red-200 text-red-700 hover:bg-red-50"
+              >
+                Delete
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5" class="px-6 py-6 text-center text-sm text-slate-500">
+            No users found yet. Click "Add New User" to create one.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination Controls -->
+  <div class="px-6 py-4 border-t border-slate-100 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <label for="perPage" class="text-sm text-slate-600">Show:</label>
+      <select
+        id="perPage"
+        onchange="changePerPage(this.value)"
+        class="px-3 py-1 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+      >
+        <option value="10" {% if per_page == 10 %}selected{% endif %}>10</option>
+        <option value="25" {% if per_page == 25 %}selected{% endif %}>25</option>
+        <option value="50" {% if per_page == 50 %}selected{% endif %}>50</option>
+        <option value="100" {% if per_page == 100 %}selected{% endif %}>100</option>
+      </select>
+      <span class="text-sm text-slate-600">per page</span>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <!-- Previous Button -->
+      {% if has_prev %}
+      <a
+        href="{{ url_for('dashboard.user_dashboard', page=page-1, per_page=per_page) }}"
+        class="px-3 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50"
+      >
+        Previous
+      </a>
+      {% else %}
+      <button
+        disabled
+        class="px-3 py-2 text-sm font-medium text-slate-400 bg-slate-100 border border-slate-200 rounded-lg cursor-not-allowed"
+      >
+        Previous
+      </button>
+      {% endif %}
+
+      <!-- Page Numbers -->
+      <div class="flex items-center gap-1">
+        {% for p in range(1, total_pages + 1) %}
+          {% if p == page %}
+            <span class="px-3 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg">
+              {{ p }}
+            </span>
+          {% elif p == 1 or p == total_pages or (p >= page - 2 and p <= page + 2) %}
+            <a
+              href="{{ url_for('dashboard.user_dashboard', page=p, per_page=per_page) }}"
+              class="px-3 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50"
+            >
+              {{ p }}
+            </a>
+          {% elif p == page - 3 or p == page + 3 %}
+            <span class="px-2 text-slate-400">...</span>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <!-- Next Button -->
+      {% if has_next %}
+      <a
+        href="{{ url_for('dashboard.user_dashboard', page=page+1, per_page=per_page) }}"
+        class="px-3 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50"
+      >
+        Next
+      </a>
+      {% else %}
+      <button
+        disabled
+        class="px-3 py-2 text-sm font-medium text-slate-400 bg-slate-100 border border-slate-200 rounded-lg cursor-not-allowed"
+      >
+        Next
+      </button>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Add User Modal -->
+<div
+  id="userModal"
+  class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+>
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4">
+    <div class="px-6 py-4 border-b border-slate-100">
+      <h3 class="text-lg font-semibold text-slate-900">Add New User</h3>
+    </div>
+
+    <form
+      method="POST"
+      action="{{url_for('dashboard.register_user')}}"
+      class="px-6 py-4"
+    >
+      <div class="space-y-4">
+        <div class="flex gap-3">
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >First Name</label
+            >
+            <input
+              type="text"
+              name="first_name"
+              required
+              class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+          </div>
+
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Last Name</label
+            >
+            <input
+              type="text"
+              name="last_name"
+              required
+              class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1"
+            >Email</label
+          >
+          <input
+            type="email"
+            name="email"
+            required
+            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1"
+            >Password</label
+          >
+          <input
+            type="password"
+            name="password"
+            required
+            minlength="8"
+            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+          <p class="text-xs text-slate-500 mt-1">Minimum 8 characters</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1"
+            >Role</label
+          >
+          <select
+            name="role"
+            required
+            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          >
+            <option value="">Select role</option>
+            <option value="admin">Admin</option>
+            <option value="doctor">Doctor</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mt-6 flex gap-3 justify-end">
+        <button
+          type="button"
+          id="cancelBtn"
+          class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-500"
+        >
+          Add User
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit User Modal -->
+<div
+  id="editModal"
+  class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+>
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4">
+    <div class="px-6 py-4 border-b border-slate-100">
+      <h3 class="text-lg font-semibold text-slate-900">Edit User</h3>
+    </div>
+
+    <form id="editForm" method="POST" action="" class="px-6 py-4">
+      <div class="space-y-4">
+        <div class="flex gap-3">
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >First Name</label
+            >
+            <input
+              type="text"
+              id="editFirstName"
+              name="first_name"
+              required
+              class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+          </div>
+
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Last Name</label
+            >
+            <input
+              type="text"
+              id="editLastName"
+              name="last_name"
+              required
+              class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1"
+            >Email</label
+          >
+          <input
+            type="email"
+            id="editEmail"
+            disabled
+            class="w-full px-3 py-2 border border-slate-300 rounded-lg bg-slate-50 text-slate-500"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1"
+            >Role</label
+          >
+          <select
+            id="editRole"
+            name="role"
+            required
+            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          >
+            <option value="">Select role</option>
+            <option value="admin">Admin</option>
+            <option value="doctor">Doctor</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mt-6 flex gap-3 justify-end">
+        <button
+          type="button"
+          id="cancelEditBtn"
+          class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-500"
+        >
+          Update User
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete User Modal -->
+<div
+  id="deleteModal"
+  class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+>
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4">
+    <div class="px-6 py-4 border-b border-slate-100">
+      <h3 class="text-lg font-semibold text-slate-900">Delete User</h3>
+    </div>
+
+    <div class="px-6 py-4">
+      <p class="text-sm text-slate-600">
+        Are you sure you want to delete <strong id="userName"></strong>? This
+        action cannot be undone.
+      </p>
+    </div>
+
+    <div class="px-6 py-4 flex gap-3 justify-end border-t border-slate-100">
+      <button
+        type="button"
+        id="cancelDeleteBtn"
+        class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200"
+      >
+        Cancel
+      </button>
+      <form id="deleteForm" method="POST" action="" class="inline">
+        <button
+          type="submit"
+          class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-500"
+        >
+          Delete
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Add user modal
+  const modal = document.getElementById("userModal");
+  const openBtn = document.getElementById("openModalBtn");
+  const cancelBtn = document.getElementById("cancelBtn");
+
+  openBtn.addEventListener("click", () => {
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+  });
+
+  // Edit user modal
+  const editModal = document.getElementById("editModal");
+  const cancelEditBtn = document.getElementById("cancelEditBtn");
+  const editForm = document.getElementById("editForm");
+
+  function openEditModal(userId, firstName, lastName, email, role) {
+    document.getElementById("editFirstName").value = firstName;
+    document.getElementById("editLastName").value = lastName;
+    document.getElementById("editEmail").value = email;
+    document.getElementById("editRole").value = role;
+    
+    editForm.action = "{{ url_for('dashboard.update_user', user_id='USER_ID') }}".replace('USER_ID', userId);
+    
+    editModal.classList.remove("hidden");
+    editModal.classList.add("flex");
+  }
+
+  cancelEditBtn.addEventListener("click", () => {
+    editModal.classList.add("hidden");
+    editModal.classList.remove("flex");
+  });
+
+  // Delete user modal
+  const deleteModal = document.getElementById("deleteModal");
+  const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
+  const deleteForm = document.getElementById("deleteForm");
+  const userNameEl = document.getElementById("userName");
+
+  function openDeleteModal(userId, userName) {
+    userNameEl.textContent = userName;
+    deleteForm.action = "{{ url_for('dashboard.delete_user', user_id='USER_ID') }}".replace('USER_ID', userId);
+    
+    deleteModal.classList.remove("hidden");
+    deleteModal.classList.add("flex");
+  }
+
+  cancelDeleteBtn.addEventListener("click", () => {
+    deleteModal.classList.add("hidden");
+    deleteModal.classList.remove("flex");
+  });
+
+  function changePerPage(perPage) {
+    window.location.href = "{{ url_for('dashboard.user_dashboard') }}?page=1&per_page=" + perPage;
+  }
+</script>
+
+{% endblock %}

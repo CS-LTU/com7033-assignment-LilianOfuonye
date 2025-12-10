@@ -1,6 +1,9 @@
 {% extends "private_layout.html" %} {% block page_content %}
 <div class="mb-8">
-  <h1 class="text-3xl font-bold text-slate-900 mb-1">Welcome!</h1>
+  <h1 class="text-3xl font-bold text-slate-900 mb-1">
+    Welcome {{ current_user.role|capitalize }} {{ current_user.last_name }}!
+
+  </h1>
 </div>
 <div
   class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden"
@@ -10,6 +13,9 @@
   >
     <div>
       <h2 class="text-lg font-semibold text-slate-900">Patients</h2>
+      <p class="text-sm text-slate-500 mt-1">
+        Showing {{ (page - 1) * per_page + 1 }} to {% if page * per_page < total_patients %}{{ page * per_page }}{% else %}{{ total_patients }}{% endif %} of {{ total_patients }} patients
+      </p>
     </div>
     {% if session.role == 'admin' %}
     <a
@@ -29,27 +35,62 @@
           <th
             class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase"
           >
-            ID
-          </th>
-          <th
-            class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase"
-          >
-            First Name
-          </th>
-          <th
-            class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase"
-          >
-            Last Name
-          </th>
-          <th
-            class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase"
-          >
-            Email
+            Patient ID
           </th>
           <th
             class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase"
           >
             Gender
+          </th>
+          <th
+            class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase"
+          >
+            Age
+          </th>
+          <th
+            class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase"
+          >
+            Hypertension
+          </th>
+          <th
+            class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase"
+          >
+            Heart Disease
+          </th>
+          <th
+            class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase"
+          >
+            Ever Married
+          </th>
+          <th
+            class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase"
+          >
+            Work Type
+          </th>
+          <th
+            class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase"
+          >
+            Residence
+          </th>
+          <th
+            class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase"
+          >
+            Avg Glucose
+          </th>
+          <th
+            class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase"
+          >
+            BMI
+          </th>
+          <th
+            class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase"
+          >
+            Smoking Status
+          </th>
+          <th
+            class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase"
+          >
+            Stroke
           </th>
           <th
             class="px-6 py-3 font-semibold text-xs tracking-wide text-slate-500 uppercase text-right"
@@ -64,14 +105,61 @@
           <td class="px-6 py-3 text-sm text-slate-700">
             {{ patient.patient_id }}
           </td>
-          <td class="px-6 py-3 text-sm text-slate-700">
-            {{ patient.first_name }}
-          </td>
-          <td class="px-6 py-3 text-sm text-slate-700">
-            {{ patient.last_name }}
-          </td>
-          <td class="px-6 py-3 text-sm text-slate-700">{{ patient.email }}</td>
           <td class="px-6 py-3 text-sm text-slate-700">{{ patient.gender }}</td>
+          <td class="px-6 py-3 text-sm text-slate-700">{{ patient.age }}</td>
+          <td class="px-6 py-3 text-sm text-slate-700">
+            {% if patient.hypertension == 1 %}
+            <span
+              class="px-2 py-1 text-xs rounded-full bg-orange-100 text-orange-700"
+              >Yes</span
+            >
+            {% else %}
+            <span
+              class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700"
+              >No</span
+            >
+            {% endif %}
+          </td>
+          <td class="px-6 py-3 text-sm text-slate-700">
+            {% if patient.heart_disease == 1 %}
+            <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700"
+              >Yes</span
+            >
+            {% else %}
+            <span
+              class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700"
+              >No</span
+            >
+            {% endif %}
+          </td>
+          <td class="px-6 py-3 text-sm text-slate-700">
+            {{ patient.ever_married }}
+          </td>
+          <td class="px-6 py-3 text-sm text-slate-700">
+            {{ patient.work_type }}
+          </td>
+          <td class="px-6 py-3 text-sm text-slate-700">
+            {{ patient.Residence_type }}
+          </td>
+          <td class="px-6 py-3 text-sm text-slate-700">
+            {{ patient.avg_glucose_level }}
+          </td>
+          <td class="px-6 py-3 text-sm text-slate-700">{{ patient.bmi }}</td>
+          <td class="px-6 py-3 text-sm text-slate-700">
+            {{ patient.smoking_status }}
+          </td>
+          <td class="px-6 py-3 text-sm text-slate-700">
+            {% if patient.stroke == 1 %}
+            <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700"
+              >Yes</span
+            >
+            {% else %}
+            <span
+              class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700"
+              >No</span
+            >
+            {% endif %}
+          </td>
           <td class="px-6 py-3 text-sm text-right">
             <div class="inline-flex items-center gap-2">
               {% if session.role == 'doctor' %}
@@ -87,9 +175,20 @@
                 </button>
               </form>
               {% endif %} {% if session.role == 'admin' %}
+                 <form
+                action="{{ url_for('dashboard.view_patient', patient_id=patient.patient_id) }}"
+                class="inline"
+              >
+                <button
+                  type="submit"
+                  class="cursor-pointer px-2 py-1 text-xs rounded-md border border-slate-200 text-slate-700 hover:bg-slate-100"
+                >
+                  View
+                </button>
+              </form>
               <button
                 type="button"
-                onclick="openDeleteModal('{{ patient.patient_id }}', '{{ patient.first_name }} {{ patient.last_name }}')"
+                onclick="openDeleteModal('{{ patient.patient_id }}', 'Patient ID {{ patient.patient_id }}')"
                 class="px-2 py-1 text-xs rounded-md border border-red-200 text-red-700 hover:bg-red-50"
               >
                 Delete
@@ -100,13 +199,87 @@
         </tr>
         {% else %}
         <tr>
-          <td colspan="6" class="px-6 py-6 text-center text-sm text-slate-500">
-            No patients found yet. Click “Add New Patient” to create one.
+          <td colspan="13" class="px-6 py-6 text-center text-sm text-slate-500">
+            No patients found yet. Click "Add New Patient" to create one.
           </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
+  </div>
+
+  <!-- Pagination Controls -->
+  <div class="px-6 py-4 border-t border-slate-100 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <label for="perPage" class="text-sm text-slate-600">Show:</label>
+      <select
+        id="perPage"
+        onchange="changePerPage(this.value)"
+        class="px-3 py-1 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+      >
+        <option value="10" {% if per_page == 10 %}selected{% endif %}>10</option>
+        <option value="25" {% if per_page == 25 %}selected{% endif %}>25</option>
+        <option value="50" {% if per_page == 50 %}selected{% endif %}>50</option>
+        <option value="100" {% if per_page == 100 %}selected{% endif %}>100</option>
+      </select>
+      <span class="text-sm text-slate-600">per page</span>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <!-- Previous Button -->
+      {% if has_prev %}
+      <a
+        href="{{ url_for('dashboard.dashboard', page=page-1, per_page=per_page) }}"
+        class="px-3 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50"
+      >
+        Previous
+      </a>
+      {% else %}
+      <button
+        disabled
+        class="px-3 py-2 text-sm font-medium text-slate-400 bg-slate-100 border border-slate-200 rounded-lg cursor-not-allowed"
+      >
+        Previous
+      </button>
+      {% endif %}
+
+      <!-- Page Numbers -->
+      <div class="flex items-center gap-1">
+        {% for p in range(1, total_pages + 1) %}
+          {% if p == page %}
+            <span class="px-3 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg">
+              {{ p }}
+            </span>
+          {% elif p == 1 or p == total_pages or (p >= page - 2 and p <= page + 2) %}
+            <a
+              href="{{ url_for('dashboard.dashboard', page=p, per_page=per_page) }}"
+              class="px-3 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50"
+            >
+              {{ p }}
+            </a>
+          {% elif p == page - 3 or p == page + 3 %}
+            <span class="px-2 text-slate-400">...</span>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <!-- Next Button -->
+      {% if has_next %}
+      <a
+        href="{{ url_for('dashboard.dashboard', page=page+1, per_page=per_page) }}"
+        class="px-3 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50"
+      >
+        Next
+      </a>
+      {% else %}
+      <button
+        disabled
+        class="px-3 py-2 text-sm font-medium text-slate-400 bg-slate-100 border border-slate-200 rounded-lg cursor-not-allowed"
+      >
+        Next
+      </button>
+      {% endif %}
+    </div>
   </div>
 </div>
 
@@ -128,11 +301,11 @@
         <div class="flex gap-3">
           <div class="flex-1">
             <label class="block text-sm font-medium text-slate-700 mb-1"
-              >First Name</label
+              >Patient ID</label
             >
             <input
-              type="text"
-              name="first_name"
+              type="number"
+              name="id"
               required
               class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
@@ -140,11 +313,11 @@
 
           <div class="flex-1">
             <label class="block text-sm font-medium text-slate-700 mb-1"
-              >Last Name</label
+              >Age</label
             >
             <input
-              type="text"
-              name="last_name"
+              type="number"
+              name="age"
               required
               class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
@@ -152,18 +325,6 @@
         </div>
 
         <div class="flex gap-3">
-          <div class="flex-1">
-            <label class="block text-sm font-medium text-slate-700 mb-1"
-              >Date of birth</label
-            >
-            <input
-              type="date"
-              name="date_of_birth"
-              required
-              class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            />
-          </div>
-
           <div class="flex-1">
             <label class="block text-sm font-medium text-slate-700 mb-1"
               >Gender</label
@@ -176,21 +337,141 @@
               <option value="">Select gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
-              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >BMI</label
+            >
+            <input
+              type="number"
+              step="0.1"
+              name="bmi"
+              required
+              class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+          </div>
+        </div>
+
+        <div class="flex gap-3">
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Hypertension</label
+            >
+            <select
+              name="hypertension"
+              required
+              class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            >
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-slate-700 mb-1"
+              >Heart Disease</label
+            >
+            <select
+              name="heart_disease"
+              required
+              class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            >
+              <option value="0">No</option>
+              <option value="1">Yes</option>
             </select>
           </div>
         </div>
 
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1"
-            >Email</label
+            >Ever Married</label
+          >
+          <select
+            name="ever_married"
+            required
+            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          >
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1"
+            >Work Type</label
+          >
+          <select
+            name="work_type"
+            required
+            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          >
+            <option value="">Select work type</option>
+            <option value="Private">Private</option>
+            <option value="Self-employed">Self-employed</option>
+            <option value="Govt_job">Government Job</option>
+            <option value="children">Children</option>
+            <option value="Never_worked">Never Worked</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1"
+            >Residence Type</label
+          >
+          <select
+            name="residence_type"
+            required
+            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          >
+            <option value="Urban">Urban</option>
+            <option value="Rural">Rural</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1"
+            >Average Glucose Level</label
           >
           <input
-            type="email"
-            name="email"
+            type="number"
+            step="0.1"
+            name="avg_glucose_level"
             required
             class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1"
+            >Smoking Status</label
+          >
+          <select
+            name="smoking_status"
+            required
+            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          >
+            <option value="">Select status</option>
+            <option value="formerly smoked">Formerly Smoked</option>
+            <option value="never smoked">Never Smoked</option>
+            <option value="smokes">Smokes</option>
+            <option value="Unknown">Unknown</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1"
+            >Stroke</label
+          >
+          <select
+            name="stroke"
+            required
+            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          >
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
         </div>
       </div>
 
@@ -213,6 +494,42 @@
   </div>
 </div>
 
+<div
+  id="deleteModal"
+  class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+>
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4">
+    <div class="px-6 py-4 border-b border-slate-100">
+      <h3 class="text-lg font-semibold text-slate-900">Delete Patient</h3>
+    </div>
+
+    <div class="px-6 py-4">
+      <p class="text-sm text-slate-600">
+        Are you sure you want to delete <strong id="patientName"></strong>? This
+        action cannot be undone.
+      </p>
+    </div>
+
+    <div class="px-6 py-4 flex gap-3 justify-end border-t border-slate-100">
+      <button
+        type="button"
+        id="cancelDeleteBtn"
+        class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200"
+      >
+        Cancel
+      </button>
+      <form id="deleteForm" method="POST" action="" class="inline">
+        <button
+          type="submit"
+          class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-500"
+        >
+          Delete
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script>
   const modal = document.getElementById("patientModal");
   const openBtn = document.getElementById("openModalBtn");
@@ -227,6 +544,32 @@
     modal.classList.add("hidden");
     modal.classList.remove("flex");
   });
+
+  // Delete modal functions
+  const deleteModal = document.getElementById("deleteModal");
+  const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
+  const deleteForm = document.getElementById("deleteForm");
+  const patientNameEl = document.getElementById("patientName");
+
+  function openDeleteModal(patientId, patientName) {
+    patientNameEl.textContent = patientName;
+    deleteForm.action =
+      "{{ url_for('dashboard.delete_patient', patient_id=0) }}".replace(
+        "0",
+        patientId
+      );
+    deleteModal.classList.remove("hidden");
+    deleteModal.classList.add("flex");
+  }
+
+  cancelDeleteBtn.addEventListener("click", () => {
+    deleteModal.classList.add("hidden");
+    deleteModal.classList.remove("flex");
+  });
+
+  function changePerPage(perPage) {
+    window.location.href = "{{ url_for('dashboard.dashboard') }}?page=1&per_page=" + perPage;
+  }
 </script>
 
 {% endblock %}

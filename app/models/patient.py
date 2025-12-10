@@ -1,7 +1,5 @@
-import sqlite3
-
-# Database file name
-DB_NAME = "london_health.db"
+from app.config.mongo_db import get_collection
+from bson.objectid import ObjectId
 
 
 class Patient:
@@ -10,40 +8,54 @@ class Patient:
     CREATE, READ, UPDATE, DELETE patients
     """
 
-    def __init__(self, patient_id, first_name, last_name, date_of_birth, gender, email):
+    def __init__(self, patient_id, id, gender, age, hypertension, heart_disease, 
+                 ever_married, work_type, residence_type, avg_glucose_level, 
+                 bmi, smoking_status, stroke):
         """Initialize a patient object with their details"""
         self.patient_id = patient_id
-        self.first_name = first_name
-        self.last_name = last_name
-        self.date_of_birth = date_of_birth
+        self.id = id
         self.gender = gender
-        self.email = email
-
+        self.age = age
+        self.hypertension = hypertension
+        self.heart_disease = heart_disease
+        self.ever_married = ever_married
+        self.work_type = work_type
+        self.residence_type = residence_type
+        self.avg_glucose_level = avg_glucose_level
+        self.bmi = bmi
+        self.smoking_status = smoking_status
+        self.stroke = stroke
 
     @staticmethod
-    def create_patient(first_name, last_name, date_of_birth, gender, email):
+    def create_patient(id, gender, age, hypertension, heart_disease, ever_married, 
+                      work_type, residence_type, avg_glucose_level, bmi, 
+                      smoking_status, stroke):
         """
         Add a new patient to the database
-        Raises ValueError if email already exists
+        Raises ValueError if patient id already exists
         """
-        try:
-            existing_patient = Patient.get_by_email(email)
-            if existing_patient:
-                raise ValueError("A patient with this email already exists")
+        existing_patient = Patient.get_by_patient_id(id)
+        if existing_patient:
+            raise ValueError("A patient with this ID already exists")
 
-            # Connect to database and insert new patient
-            with sqlite3.connect(DB_NAME) as conn:
-                cursor = conn.cursor()
-                cursor.execute(
-                    "INSERT INTO patients (first_name, last_name, date_of_birth, gender, email) VALUES (?, ?, ?, ?, ?)",
-                    (first_name, last_name, date_of_birth, gender, email)
-                )
-                conn.commit()
-
-        except sqlite3.IntegrityError:
-            # Database caught duplicate email
-            raise ValueError("A patient with this email already exists")
-
+        # Insert new patient into MongoDB
+        collection = get_collection()
+        patient_data = {
+            'id': id,
+            'gender': gender,
+            'age': age,
+            'hypertension': hypertension,
+            'heart_disease': heart_disease,
+            'ever_married': ever_married,
+            'work_type': work_type,
+            'Residence_type': residence_type,
+            'avg_glucose_level': avg_glucose_level,
+            'bmi': bmi,
+            'smoking_status': smoking_status,
+            'stroke': stroke
+        }
+        result = collection.insert_one(patient_data)
+        return str(result.inserted_id)
 
     @staticmethod
     def get_all_patients():
@@ -51,110 +63,161 @@ class Patient:
         Get all patients from database
         Returns list of patient dictionaries
         """
-        # Connect to database and get all patients
-        with sqlite3.connect(DB_NAME) as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM patients")
-            rows = cursor.fetchall()
-
-        # This convert rows to list of dictionaries
+        collection = get_collection()
         patients = []
-        for row in rows:
+        
+        for doc in collection.find():
             patient = {
-                'patient_id': row[0],
-                'first_name': row[1],
-                'last_name': row[2],
-                'date_of_birth': row[3],
-                'gender': row[4],
-                'email': row[5]
+                'patient_id': doc.get('id'), 
+                'id': str(doc['_id']) ,            
+                'gender': doc.get('gender'),
+                'age': doc.get('age'),
+                'hypertension': doc.get('hypertension'),
+                'heart_disease': doc.get('heart_disease'),
+                'ever_married': doc.get('ever_married'),
+                'work_type': doc.get('work_type'),
+                'Residence_type': doc.get('Residence_type'),
+                'avg_glucose_level': doc.get('avg_glucose_level'),
+                'bmi': doc.get('bmi'),
+                'smoking_status': doc.get('smoking_status'),
+                'stroke': doc.get('stroke')
             }
             patients.append(patient)
 
         return patients
 
+    @staticmethod
+    def get_paginated_patients(page=1, per_page=10):
+        """
+        Get paginated patients from database
+        Returns tuple of (patients list, total count)
+        """
+        collection = get_collection()
+        
+        # Get total count
+        total = collection.count_documents({})
+        
+        # Calculate skip value
+        skip = (page - 1) * per_page
+        
+        # Get paginated results
+        patients = []
+        for doc in collection.find().skip(skip).limit(per_page):
+            patient = {
+                'patient_id': doc.get('id'),
+                'gender': doc.get('gender'),
+                'age': doc.get('age'),
+                'hypertension': doc.get('hypertension'),
+                'heart_disease': doc.get('heart_disease'),
+                'ever_married': doc.get('ever_married'),
+                'work_type': doc.get('work_type'),
+                'Residence_type': doc.get('Residence_type'),
+                'avg_glucose_level': doc.get('avg_glucose_level'),
+                'bmi': doc.get('bmi'),
+                'smoking_status': doc.get('smoking_status'),
+                'stroke': doc.get('stroke')
+            }
+            patients.append(patient)
+
+        return patients, total
 
     @staticmethod
     def get_by_id(patient_id):
         """
-        Get a specific patient by their ID
+        Get a specific patient by their MongoDB _id
         Returns patient dictionary or None if not found
         """
-        # Connect to database and find patient by ID
-        with sqlite3.connect(DB_NAME) as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM patients WHERE id = ?", (patient_id,))
-            row = cursor.fetchone()
+        collection = get_collection()
+        
+        try:
+            doc = collection.find_one({'id': patient_id})
+        except:
+            return None
 
-        # Convert to dictionary if found
-        if row:
+        if doc:
             patient = {
-                'patient_id': row[0],
-                'first_name': row[1],
-                'last_name': row[2],
-                'date_of_birth': row[3],
-                'gender': row[4],
-                'email': row[5]
+                'id': str(doc['_id']) ,
+                'patient_id':doc.get('id'),
+                'id': doc.get('id'),
+                'gender': doc.get('gender'),
+                'age': doc.get('age'),
+                'hypertension': doc.get('hypertension'),
+                'heart_disease': doc.get('heart_disease'),
+                'ever_married': doc.get('ever_married'),
+                'work_type': doc.get('work_type'),
+                'Residence_type': doc.get('Residence_type'),
+                'avg_glucose_level': doc.get('avg_glucose_level'),
+                'bmi': doc.get('bmi'),
+                'smoking_status': doc.get('smoking_status'),
+                'stroke': doc.get('stroke')
             }
             return patient
         
         return None
 
-
     @staticmethod
-    def get_by_email(email):
+    def get_by_patient_id(id):
         """
-        Find a patient by their email
+        Find a patient by their patient id field
         Returns patient dictionary or None if not found
         """
-        # Connect to database and find patient by email
-        with sqlite3.connect(DB_NAME) as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM patients WHERE email = ?", (email,))
-            row = cursor.fetchone()
+        collection = get_collection()
+        doc = collection.find_one({'id': id})
 
-        # Convert to dictionary if found
-        if row:
+        if doc:
             patient = {
-                'patient_id': row[0],
-                'first_name': row[1],
-                'last_name': row[2],
-                'date_of_birth': row[3],
-                'gender': row[4],
-                'email': row[5]
+                'id': str(doc['_id']),
+                'patient_id': doc.get('id'),
+                'gender': doc.get('gender'),
+                'age': doc.get('age'),
+                'hypertension': doc.get('hypertension'),
+                'heart_disease': doc.get('heart_disease'),
+                'ever_married': doc.get('ever_married'),
+                'work_type': doc.get('work_type'),
+                'Residence_type': doc.get('Residence_type'),
+                'avg_glucose_level': doc.get('avg_glucose_level'),
+                'bmi': doc.get('bmi'),
+                'smoking_status': doc.get('smoking_status'),
+                'stroke': doc.get('stroke')
             }
             return patient
         
         return None
 
-
     @staticmethod
-    def update(patient_id, first_name, last_name, date_of_birth, gender):
+    def update(patient_id, gender, age, hypertension, heart_disease, ever_married,
+               work_type, residence_type, avg_glucose_level, bmi, smoking_status, stroke):
         """
         Update a patient's information
         Returns True if successful, False if patient not found
         """
         try:
-            # Connect to database and update patient information
-            with sqlite3.connect(DB_NAME) as conn:
-                cursor = conn.cursor()
-                cursor.execute(
-                    "UPDATE patients SET first_name = ?, last_name = ?, date_of_birth = ?, gender = ? WHERE id = ?",
-                    (first_name, last_name, date_of_birth, gender, patient_id)
-                )
-                conn.commit()
-                return True
+            collection = get_collection()
+            result = collection.update_one(
+                {'id': patient_id},
+                {'$set': {
+                    'gender': gender,
+                    'age': age,
+                    'hypertension': hypertension,
+                    'heart_disease': heart_disease,
+                    'ever_married': ever_married,
+                    'work_type': work_type,
+                    'Residence_type': residence_type,
+                    'avg_glucose_level': avg_glucose_level,
+                    'bmi': bmi,
+                    'smoking_status': smoking_status,
+                    'stroke': stroke
+                }}
+            )
+            return result.modified_count > 0
         except Exception as e:
             raise ValueError(f"Failed to update patient: {e}")
-
 
     @staticmethod
     def delete_patient(patient_id):
         """
         Delete a patient from database
         """
-        # Connect to database and delete patient
-        with sqlite3.connect(DB_NAME) as conn:
-            cursor = conn.cursor()
-            cursor.execute("DELETE FROM patients WHERE id = ?", (patient_id,))
-            conn.commit()
-            return True
+        collection = get_collection()
+        result = collection.delete_one({'id': patient_id})
+        return result.deleted_count > 0

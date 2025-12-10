@@ -17,22 +17,14 @@
   <div class="px-6 py-4 flex items-center justify-between border-b border-slate-100">
     <div>
       <h2 class="text-lg font-semibold text-slate-900">
-        {{ patient.first_name }} {{ patient.last_name }}
+        Patient ID: {{ patient.patient_id }}
       </h2>
       <p class="text-xs text-slate-500">
-        Patient ID: {{ patient.patient_id }}
+        {{ patient.gender }}, {{ patient.age }} years old
       </p>
     </div>
 
-    <div class="flex gap-3">
-     
-      <a
-        href="#"
-       class="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-500"
-      >
-       New Assessment
-      </a>
-    </div>
+
   </div>
 
   <form
@@ -40,49 +32,36 @@
     action="{{ url_for('dashboard.update_patient', patient_id=patient.patient_id) }}"
     class="px-6 py-6 space-y-5"
   >
-    <div class="flex flex-col md:flex-row gap-4">
-      <div class="flex-1">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
         <label class="block text-sm font-medium text-slate-700 mb-1">
-          First Name
+          Patient ID
         </label>
         <input
-          type="text"
-          name="first_name"
-          value="{{ patient.first_name }}"
-          required
-          class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          type="number"
+          name="patient_id"
+          value="{{ patient.patient_id }}"
+          disabled
+          class="w-full px-3 py-2 border border-slate-300 rounded-lg bg-slate-50 text-slate-500"
         />
       </div>
 
-      <div class="flex-1">
+      <div>
         <label class="block text-sm font-medium text-slate-700 mb-1">
-          Last Name
+          Age
         </label>
         <input
-          type="text"
-          name="last_name"
-          value="{{ patient.last_name }}"
+          type="number"
+          name="age"
+          value="{{ patient.age }}"
           required
           class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
       </div>
     </div>
 
-    <div class="flex flex-col md:flex-row gap-4">
-      <div class="flex-1">
-        <label class="block text-sm font-medium text-slate-700 mb-1">
-          Date of Birth
-        </label>
-        <input
-          type="date"
-          name="date_of_birth"
-          value="{{ patient.date_of_birth }}"
-          required
-          class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
-        />
-      </div>
-
-      <div class="flex-1">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
         <label class="block text-sm font-medium text-slate-700 mb-1">
           Gender
         </label>
@@ -94,27 +73,153 @@
           <option value="">Select gender</option>
           <option value="Male" {% if patient.gender == 'Male' %}selected{% endif %}>Male</option>
           <option value="Female" {% if patient.gender == 'Female' %}selected{% endif %}>Female</option>
-          <option value="Other" {% if patient.gender == 'Other' %}selected{% endif %}>Other</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">
+          BMI
+        </label>
+        <input
+          type="number"
+          step="0.1"
+          name="bmi"
+          value="{{ patient.bmi }}"
+          required
+          class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">
+          Hypertension
+        </label>
+        <select
+          name="hypertension"
+          required
+          class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        >
+          <option value="0" {% if patient.hypertension == 0 %}selected{% endif %}>No</option>
+          <option value="1" {% if patient.hypertension == 1 %}selected{% endif %}>Yes</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">
+          Heart Disease
+        </label>
+        <select
+          name="heart_disease"
+          required
+          class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        >
+          <option value="0" {% if patient.heart_disease == 0 %}selected{% endif %}>No</option>
+          <option value="1" {% if patient.heart_disease == 1 %}selected{% endif %}>Yes</option>
         </select>
       </div>
     </div>
 
-    <div>
-      <label class="block text-sm font-medium text-slate-700 mb-1">
-        Email
-      </label>
-      <input
-        type="email"
-        name="email"
-        value="{{ patient.email }}"
-      disabled
-        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
-      />
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">
+          Ever Married
+        </label>
+        <select
+          name="ever_married"
+          required
+          class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        >
+          <option value="Yes" {% if patient.ever_married == 'Yes' %}selected{% endif %}>Yes</option>
+          <option value="No" {% if patient.ever_married == 'No' %}selected{% endif %}>No</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">
+          Work Type
+        </label>
+        <select
+          name="work_type"
+          required
+          class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        >
+          <option value="">Select work type</option>
+          <option value="Private" {% if patient.work_type == 'Private' %}selected{% endif %}>Private</option>
+          <option value="Self-employed" {% if patient.work_type == 'Self-employed' %}selected{% endif %}>Self-employed</option>
+          <option value="Govt_job" {% if patient.work_type == 'Govt_job' %}selected{% endif %}>Government Job</option>
+          <option value="children" {% if patient.work_type == 'children' %}selected{% endif %}>Children</option>
+          <option value="Never_worked" {% if patient.work_type == 'Never_worked' %}selected{% endif %}>Never Worked</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">
+          Residence Type
+        </label>
+        <select
+          name="residence_type"
+          required
+          class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        >
+          <option value="Urban" {% if patient.Residence_type == 'Urban' %}selected{% endif %}>Urban</option>
+          <option value="Rural" {% if patient.Residence_type == 'Rural' %}selected{% endif %}>Rural</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">
+          Average Glucose Level
+        </label>
+        <input
+          type="number"
+          step="0.1"
+          name="avg_glucose_level"
+          value="{{ patient.avg_glucose_level }}"
+          required
+          class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">
+          Smoking Status
+        </label>
+        <select
+          name="smoking_status"
+          required
+          class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        >
+          <option value="">Select status</option>
+          <option value="formerly smoked" {% if patient.smoking_status == 'formerly smoked' %}selected{% endif %}>Formerly Smoked</option>
+          <option value="never smoked" {% if patient.smoking_status == 'never smoked' %}selected{% endif %}>Never Smoked</option>
+          <option value="smokes" {% if patient.smoking_status == 'smokes' %}selected{% endif %}>Smokes</option>
+          <option value="Unknown" {% if patient.smoking_status == 'Unknown' %}selected{% endif %}>Unknown</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">
+          Stroke
+        </label>
+        <select
+          name="stroke"
+          required
+          class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        >
+          <option value="0" {% if patient.stroke == 0 %}selected{% endif %}>No</option>
+          <option value="1" {% if patient.stroke == 1 %}selected{% endif %}>Yes</option>
+        </select>
+      </div>
     </div>
 
     {% if session.role== 'doctor'%}
     <div class="pt-2 flex justify-end gap-3">
-
       <button
         type="submit"
         class="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-500"

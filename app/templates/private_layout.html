@@ -1,6 +1,6 @@
 {% extends "base.html" %} {% block content %}
 <div class="min-h-screen bg-slate-100 flex">
-  <aside class="w-64 bg-slate-900 text-slate-100 flex flex-col">
+  <aside class="w-64 bg-slate-300 text-slate-900 flex flex-col">
     <div class="px-6 py-5 border-b border-slate-800">
       <h1 class="text-lg font-semibold tracking-tight">London Hospital</h1>
     </div>
@@ -17,13 +17,26 @@
         </span>
         <span>Patient Management</span>
       </a>
+      {% if session.role == 'admin' %}
+      <a
+        href="{{ url_for('dashboard.user_dashboard') }}"
+        class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-slate-800 text-white shadow-inner"
+      >
+        <span
+          class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/20"
+        >
+          <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+        </span>
+        <span>User Management</span>
+      </a>
+      {% else %} {% endif %}
     </nav>
 
     <div class="border-t border-slate-800 px-3 py-4">
       <form action="{{ url_for('auth.logout') }}">
         <button
           type="submit"
-          class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium bg-red-600 hover:bg-red-500 text-white transition"
+          class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium bg-[#bc3232] hover:bg-red-500 text-white transition"
         >
           Logout
         </button>
@@ -33,7 +46,7 @@
 
   <main class="flex-1 flex flex-col">
     <section class="flex-1">
-      <div class="max-w-6xl mx-auto px-6 py-8">
+      <div class="max-w-5xl mx-auto px-6 py-8">
         {% block page_content %}{% endblock %}
       </div>
     </section>
