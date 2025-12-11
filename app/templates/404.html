@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 - Page Not Found | London Hospital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-2xl w-full">
+      <!-- Error Card -->
+      <div
+        class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden"
+      >
+        <!-- Header -->
+        <div class="px-6 py-8 text-center border-b border-slate-100">
+          <div class="text-emerald-600 text-8xl font-bold mb-4">404</div>
+          <h1 class="text-3xl font-bold text-slate-900 mb-2">Page Not Found</h1>
+          <p class="text-slate-600">
+            Oops! This page is unavailable
+          </p>
+        </div>
+        <div class="px-6 py-8">
+          <div class="space-y-4 text-center">
+
+            <div
+              class="flex flex-col sm:flex-row gap-3 justify-center items-center mt-6"
+            >
+              {% if current_user or session.get('user_id') %}
+              <!-- Show Dashboard button for logged-in users -->
+              <a
+                href="{{ url_for('dashboard.dashboard') }}"
+                class="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium bg-emerald-600 text-white hover:bg-emerald-500 transition w-full sm:w-auto justify-center"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+                  />
+                </svg>
+                <span>Go to Dashboard</span>
+              </a>
+              {% else %}
+              <!-- Show Login and Go Home buttons for guests -->
+              <a
+                href="{{ url_for('auth.login') }}"
+                class="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium bg-emerald-600 text-white hover:bg-emerald-500 transition w-full sm:w-auto justify-center"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span>Login</span>
+              </a>
+
+              <a
+                href="/"
+                class="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition w-full sm:w-auto justify-center"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+                  />
+                </svg>
+                <span>Go Home</span>
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+     
+    </div>
+  </body>
+</html>

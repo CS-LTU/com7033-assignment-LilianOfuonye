@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from app.config.sqlite import init_db
 from app.config.mongo_db import mongo_init_db
 import os
+from flask_wtf.csrf import CSRFProtect
 
 load_dotenv()
 
@@ -21,6 +22,13 @@ def create_app():
     mongo_init_db()
     # Read secret key 
     app.secret_key = os.getenv("SECRET_KEY")
+    
+    csrf = CSRFProtect(app)
+    
+    # IMPORTANT: Configure CSRF to protect all POST/PUT/PATCH/DELETE requests
+    app.config['WTF_CSRF_ENABLED'] = True
+    app.config['WTF_CSRF_CHECK_DEFAULT'] = True
+    
     print(app.secret_key)
     from app.routes import auth
     from app.routes import dashboard
@@ -47,5 +55,11 @@ def create_app():
 
         return dict(current_user=user)
 
+    # Register 404 error handler
+    @app.errorhandler(404)
+    def page_not_found(e):
+        """Handle 404 errors with custom template"""
+        from flask import render_template
+        return render_template('404.html'), 404
 
     return app
