@@ -4,6 +4,7 @@ from app.config.sqlite import init_db
 from app.config.mongo_db import mongo_init_db
 import os
 from flask_wtf.csrf import CSRFProtect
+from app.config.mongo_seed import seed_mongo
 
 load_dotenv()
 
@@ -20,12 +21,14 @@ def create_app():
     # Database setup
     init_db()
     mongo_init_db()
+    seed_mongo()
+    
     # Read secret key 
     app.secret_key = os.getenv("SECRET_KEY")
     
     csrf = CSRFProtect(app)
     
-    # IMPORTANT: Configure CSRF to protect all POST/PUT/PATCH/DELETE requests
+    # IMPORTANT: Configure CSRF to protect all POST requests
     app.config['WTF_CSRF_ENABLED'] = True
     app.config['WTF_CSRF_CHECK_DEFAULT'] = True
     

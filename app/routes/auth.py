@@ -4,7 +4,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import re
 from app.config.sqlite import get_user_by_email
 
-# This is the authentication file that handles login, register,logout and home page redirect, with everything grouped within a blueprint.
+"""
+This is the authentication file that handles login, register,logout 
+and home page redirect, with everything 
+grouped within a blueprint.
+
+"""
+
 auth_blueprint = Blueprint('auth', __name__)
 
 @auth_blueprint.route('/')
@@ -93,73 +99,6 @@ def register():
 
      return render_template('register.html')
      
-
-
-
-@auth_blueprint.route('/forgot-password', methods=['GET', 'POST'])
-def forgot_password():
-    if request.method == 'POST':
-        email = request.form.get('email')
-        print(email)
-        if not email:
-            flash("Enter your email.", "error")
-            return render_template('forgot_password.html')
-
-        user = get_user_by_email(email)
-        if not user:
-            flash("No account found with that username.", "error")
-            return render_template('forgot_password.html')
-
-        # This helps to store email in a temporary session variable
-        session['reset_user'] = email
-
-        return redirect(url_for('auth.reset_password'))
-
-    return render_template('forgot_password.html')
-
-
-
-
-@auth_blueprint.route('/reset-password', methods=['GET', 'POST'])
-def reset_password():
-    email = session.get('reset_user')
-
-    if not email:
-        flash("Reset session expired. Try again.", "error")
-        return redirect(url_for('auth.forgot_password'))
-
-    if request.method == 'POST':
-        password = request.form.get('password')
-        confirm = request.form.get('confirm_password')
-
-        if not password or not confirm:
-            flash("All fields required.", "error")
-            return render_template('reset_password.html')
-
-        if password != confirm:
-            flash("Passwords do not match.", "error")
-            return render_template('reset_password.html')
-
-        hashed = generate_password_hash(password)
-
-        # update SQLite
-        import sqlite3
-        with sqlite3.connect("users.db") as conn:
-            cur = conn.cursor()
-            cur.execute(
-                "UPDATE users SET password_hash=? WHERE email=?",
-                (hashed, email)
-            )
-            conn.commit()
-
-        # remove temporary reset session
-        session.pop('reset_user', None)
-
-        flash("Password updated. You can now log in.", "success")
-        return redirect(url_for('auth.login'))
-
-    return render_template('reset_password.html')
-
 
 
 @auth_blueprint.route('/logout')
