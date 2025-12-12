@@ -103,12 +103,12 @@ python -m unittest discover -s app/tests -p "*.py" -v
 
 | Method | Route | Access | Description | Required Fields |
 |--------|-------|--------|-------------|-----------------|
-| GET | `/dashboard` | Doctor/Admin | View paginated patient list | page (optional), per_page (optional) |
+| GET | `/dashboard` | Doctor/Admin | View paginated patient list | page, per_page |
 | GET/POST | `/register_patient` | Admin | Create new patient record | id, gender, age, hypertension, heart_disease, ever_married, work_type, residence_type, avg_glucose_level, bmi, smoking_status, stroke |
 | GET | `/dashboard/patients/<patient_id>` | Doctor/Admin | View patient details | - |
 | POST | `/dashboard/patients/<patient_id>/update` | Doctor/Admin | Update patient record | gender, age, hypertension, heart_disease, ever_married, work_type, residence_type, avg_glucose_level, bmi, smoking_status, stroke |
 | POST | `/dashboard/patients/<patient_id>/delete` | Admin | Delete patient record | - |
-| GET | `/user_dashboard` | Admin | View user management dashboard | page (optional), per_page (optional) |
+| GET | `/user_dashboard` | Admin | View user management dashboard | page, per_page |
 | POST | `/register_user` | Admin | Create new user account | first_name, last_name, email, password, role |
 | POST | `/dashboard/users/<user_id>/update` | Admin | Update user information | first_name, last_name, role |
 | POST | `/dashboard/users/<user_id>/delete` | Admin | Delete user account | - |
