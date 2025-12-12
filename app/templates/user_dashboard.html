@@ -82,6 +82,7 @@
               >
                 Edit
               </button>
+             {% if not (user.id == current_user.id and user.role == 'admin') %}
               <button
                 type="button"
                 onclick="openDeleteModal('{{ user.id }}', '{{ user.first_name }} {{ user.last_name }}')"
@@ -89,6 +90,7 @@
               >
                 Delete
               </button>
+              {% endif %}
             </div>
           </td>
         </tr>

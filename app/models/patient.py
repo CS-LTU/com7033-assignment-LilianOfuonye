@@ -88,38 +88,45 @@ class Patient:
 
     @staticmethod
     def get_paginated_patients(page=1, per_page=10):
-        """
-        Get paginated patients from database
-        Returns tuple of (patients list, total count)
-        """
-        collection = get_collection()
-        
-        # Get total count
-        total = collection.count_documents({})
-        
-        # Calculate skip value
-        skip = (page - 1) * per_page
-        
-        # Get paginated results
-        patients = []
-        for doc in collection.find().skip(skip).limit(per_page):
-            patient = {
-                'patient_id': doc.get('id'),
-                'gender': doc.get('gender'),
-                'age': doc.get('age'),
-                'hypertension': doc.get('hypertension'),
-                'heart_disease': doc.get('heart_disease'),
-                'ever_married': doc.get('ever_married'),
-                'work_type': doc.get('work_type'),
-                'Residence_type': doc.get('Residence_type'),
-                'avg_glucose_level': doc.get('avg_glucose_level'),
-                'bmi': doc.get('bmi'),
-                'smoking_status': doc.get('smoking_status'),
-                'stroke': doc.get('stroke')
-            }
-            patients.append(patient)
+            """
+            Get paginated patients from database
+            Returns tuple of (patients list, total count)
+            """
+            collection = get_collection()
+            
+            # Get total count
+            total = collection.count_documents({})
+            
+            # Calculate skip value
+            skip = (page - 1) * per_page
+            
+            # Get paginated results, sorted by newest first
+            patients = []
+            cursor = (
+                collection.find()
+                .sort("_id", -1)      # sort by Mongo's _id
+                .skip(skip)
+                .limit(per_page)
+            )
 
-        return patients, total
+            for doc in cursor:
+                patient = {
+                    'patient_id': doc.get('id'),
+                    'gender': doc.get('gender'),
+                    'age': doc.get('age'),
+                    'hypertension': doc.get('hypertension'),
+                    'heart_disease': doc.get('heart_disease'),
+                    'ever_married': doc.get('ever_married'),
+                    'work_type': doc.get('work_type'),
+                    'Residence_type': doc.get('Residence_type'),
+                    'avg_glucose_level': doc.get('avg_glucose_level'),
+                    'bmi': doc.get('bmi'),
+                    'smoking_status': doc.get('smoking_status'),
+                    'stroke': doc.get('stroke')
+                }
+                patients.append(patient)
+
+            return patients, total
 
     @staticmethod
     def get_by_id(patient_id):

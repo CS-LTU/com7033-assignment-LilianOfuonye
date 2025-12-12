@@ -118,7 +118,7 @@ def view_patient(patient_id):
 
 @dashboard_blueprint.route('/dashboard/patients/<int:patient_id>/update', methods=['GET', 'POST'])
 @auth_required
-@doctor_required
+@admin_or_doctor_required
 def update_patient(patient_id):
     if request.method == 'POST':
         try:

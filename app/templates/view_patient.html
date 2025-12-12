@@ -218,8 +218,7 @@
         </select>
       </div>
     </div>
-
-    {% if session.role== 'doctor'%}
+{% if current_user.role in ['admin', 'doctor'] %}
     <div class="pt-2 flex justify-end gap-3">
       <button
         type="submit"

@@ -48,8 +48,8 @@ cd com7033-assignment-LilianOfuonye
 ```bash
 python -m venv venv
 
-# macOS/Linux
-source venv/bin/activate
+# on bash
+source venv/Scripts/activate
 
 # Windows
 venv\Scripts\activate

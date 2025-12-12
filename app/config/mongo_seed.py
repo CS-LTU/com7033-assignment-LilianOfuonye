@@ -31,8 +31,17 @@ def seed_mongo():
             print("CSV missing or unreadable. Skipping seeding.")
             return
 
-        # Minimal cleaning
+
+        # bmi: numeric (float), NaN -> 0
         df["bmi"] = pd.to_numeric(df["bmi"], errors="coerce").fillna(0)
+
+        # age: numeric -> int
+        df["age"] = pd.to_numeric(df["age"], errors="coerce").fillna(0).astype(int)
+
+        # ensure these are integers as well
+        for col in ["hypertension", "heart_disease", "stroke"]:
+            df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0).astype(int)
+
 
         records = df.to_dict("records")
 
@@ -45,7 +54,7 @@ def seed_mongo():
             print("Database insert failed. Skipping seeding.....")
             return
 
-        #  marker to confirm the db has already been seeded
+        # marker to confirm the db has already been seeded
         markers.insert_one({"name": "stroke_seed_done"})
 
         print(f"Seed complete. Inserted {len(records)} records.")

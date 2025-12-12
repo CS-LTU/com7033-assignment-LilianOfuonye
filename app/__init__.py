@@ -32,7 +32,7 @@ def create_app():
     app.config['WTF_CSRF_ENABLED'] = True
     app.config['WTF_CSRF_CHECK_DEFAULT'] = True
     
-    print(app.secret_key)
+    
     from app.routes import auth
     from app.routes import dashboard
 
