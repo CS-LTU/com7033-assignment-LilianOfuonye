@@ -1,6 +1,6 @@
 # London Hospital Data Portal
 
-A secure Flask-based web application that allows healthcare staff record, manage, and review patient data used in patient's assessment. Designed to prioritise protection of data, smooth user experience, and strict privacy controls, the system provides separate access levels for doctors and administrators within a hospital setting.
+A secure Flask-based web application that allows healthcare staff record, manage, and review patient data used in patient's assessment. Designed to prioritise protection of data, smooth user experience, and strict privacy controls, the system provides separate access levels for doctors and administrators within a hospital setting. 
 ## Features
 
 - Secure User Authentication
@@ -8,6 +8,7 @@ A secure Flask-based web application that allows healthcare staff record, manage
 - Admin Dashboard for CRUD functionalities
 - Dashboard for Doctors to view and manage patient's records
 - Secure Session Handling & Input Validation
+- Role-Based Access Control with two roles (Administrator, Doctor)
 - Zero Trust Architecture and OWASP-aligned security practices
 
 ## System Architecture
@@ -168,7 +169,7 @@ python -m unittest discover -s app/tests -p "*.py" -v
 **Decision:** Implement decorator-based RBAC with two roles (Admin, Doctor).
 
 **Rationale:**
-- **Least Privilege Principle:** Doctors can only view/update; Admins have full CRUD
+- **Least Privilege Principle:** Doctors can only view/update; Admins have full CRUD but cant delete their own account
 - **Decorator Pattern:** Reusable `@admin_required` and `@doctor_required` decorators reduce code duplication
 - **Template-Level Enforcement:** Conditional rendering (`{% if session.role == 'admin' %}`) prevents UI confusion
 

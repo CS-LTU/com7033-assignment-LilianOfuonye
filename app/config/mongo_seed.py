@@ -3,6 +3,7 @@ import os
 from pymongo import MongoClient
 
 def seed_mongo():
+    client = None
     try:
         # MongoDB connection
         uri = os.getenv("MONGO_URL")
@@ -31,7 +32,6 @@ def seed_mongo():
             print("CSV missing or unreadable. Skipping seeding.")
             return
 
-
         # bmi: numeric (float), NaN -> 0
         df["bmi"] = pd.to_numeric(df["bmi"], errors="coerce").fillna(0)
 
@@ -41,7 +41,6 @@ def seed_mongo():
         # ensure these are integers as well
         for col in ["hypertension", "heart_disease", "stroke"]:
             df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0).astype(int)
-
 
         records = df.to_dict("records")
 
@@ -62,3 +61,6 @@ def seed_mongo():
     except Exception as e:
         # NEVER let the app break
         print("Unexpected error during seeding, but continuing:", e)
+    finally:
+        if client is not None:
+            client.close()
